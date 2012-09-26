@@ -1,0 +1,15 @@
+<?php
+return array(
+    'reverseoauth2' => array(
+        'google' => array(
+            'client_id'     => 'your id',
+            'client_secret' => 'your secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
+        ),
+        'github' => array(
+            'client_id'     => 'your id',
+            'client_secret' => 'your secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
+        ),
+    )
+);
