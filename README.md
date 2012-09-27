@@ -8,7 +8,9 @@ Demo
 Minimum rights are used. If you feel intimidated revoke the rights.
 
 Github: http://reverseform.modo.si/oauth-github
+
 Google: http://reverseform.modo.si/oauth-google
+
 Facebook: http://reverseform.modo.si/oauth-facebook
 
 Usage
