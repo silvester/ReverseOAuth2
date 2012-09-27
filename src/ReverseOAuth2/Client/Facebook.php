@@ -1,11 +1,11 @@
 <?php
 
-namespace ReverseOAuth2\Provider;
+namespace ReverseOAuth2\Client;
 
-use \ReverseOAuth2\AbstractOAuth2Provider;
+use \ReverseOAuth2\AbstractOAuth2Client;
 use \Zend\Http\PhpEnvironment\Request;
 
-class Facebook extends AbstractOAuth2Provider
+class Facebook extends AbstractOAuth2Client
 {
 
     public function getUrl()

@@ -6,21 +6,21 @@ return array(
         'factories' => array(
             
             'ReverseOAuth2\Google' => function ($sm) {
-                $me = new \ReverseOAuth2\Provider\Google;
+                $me = new \ReverseOAuth2\Client\Google;
                 $cf = $sm->get('Config');
                 $me->setOptions($cf['reverseoauth2']['google']);
                 return $me;
             },
             
             'ReverseOAuth2\Github' => function ($sm) {
-                $me = new \ReverseOAuth2\Provider\Github;
+                $me = new \ReverseOAuth2\Client\Github;
                 $cf = $sm->get('Config');
                 $me->setOptions($cf['reverseoauth2']['github']);
                 return $me;
             },
             
             'ReverseOAuth2\Facebook' => function ($sm) {
-                $me = new \ReverseOAuth2\Provider\Facebook;
+                $me = new \ReverseOAuth2\Client\Facebook;
                 $cf = $sm->get('Config');
                 $me->setOptions($cf['reverseoauth2']['facebook']);
                 return $me;

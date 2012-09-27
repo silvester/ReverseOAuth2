@@ -1,7 +1,7 @@
 ReverseOAuth2
 ===========
 
-Another OAuth2 provider for ZF2. It provides providers for github, google and facebook others soon to come.
+Another OAuth2 client for ZF2. It provides clients for github, google and facebook others soon to come.
 
 Demo
 ----
@@ -40,7 +40,9 @@ Copy & rename the config/reverseoauth2.local.php.dist to your autoload folder an
             $info = $me->getInfo();
             
         } else {
+        
             $url = $me->getUrl();
+            
         }
 
         return array('token' => $token, 'info' => $info, 'url' => $url);
@@ -52,6 +54,6 @@ The action name depends on your settings. getUrl() will return the url where you
 
 TODO
 ----
-* Add other providers
+* Add other clients
 * Write some decent documentation.
 * Demo module is on it's way.

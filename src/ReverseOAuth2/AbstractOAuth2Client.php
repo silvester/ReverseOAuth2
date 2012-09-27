@@ -4,7 +4,7 @@ namespace ReverseOAuth2;
 
 use Zend\Http\PhpEnvironment\Request;
 
-abstract class AbstractOAuth2Provider
+abstract class AbstractOAuth2Client
 {
     
     protected $session;
