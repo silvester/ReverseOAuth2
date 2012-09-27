@@ -3,6 +3,14 @@ ReverseOAuth2
 
 Another OAuth2 provider for ZF2. It provides providers for github, google and facebook others soon to come.
 
+Demo
+----
+Minimum rights are used. If you feel intimidated revoke the rights.
+
+Github: http://reverseform.modo.si/oauth-github
+Google: http://reverseform.modo.si/oauth-google
+Facebook: http://reverseform.modo.si/oauth-facebook
+
 Usage
 -----
 
