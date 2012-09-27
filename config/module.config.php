@@ -17,6 +17,13 @@ return array(
                 $cf = $sm->get('Config');
                 $me->setOptions($cf['reverseoauth2']['github']);
                 return $me;
+            },
+            
+            'ReverseOAuth2\Facebook' => function ($sm) {
+                $me = new \ReverseOAuth2\Provider\Facebook;
+                $cf = $sm->get('Config');
+                $me->setOptions($cf['reverseoauth2']['facebook']);
+                return $me;
             }
             
         )

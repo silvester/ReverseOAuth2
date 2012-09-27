@@ -28,7 +28,7 @@ class Github extends AbstractOAuth2Provider
         
         if(isset($this->session->token)) {
         
-            return $this->session->token;
+            return true;
             
         } elseif($this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
             
@@ -42,15 +42,16 @@ class Github extends AbstractOAuth2Provider
                 'state'         => $this->getState()
             ));
             
-            $client->setEncType('application/x-www-form-urlencoded');
-            
             parse_str($client->send()->getContent(), $token);
             
-            if(!isset($token['error'])) {
+            if(isset($token['error'])) {
+                $this->error = (array)$token;
+                return false;
+            } else {
                 $this->session->token = $token;
-            };
+            }
             
-            return $token;
+            return true;
             
         } else {
 

@@ -1,7 +1,7 @@
 ReverseOAuth2
 ===========
 
-Another OAuth2 provider. It provides providers for github and google, others soon to come.
+Another OAuth2 provider for ZF2. It provides providers for github and google, others soon to come.
 
 Usage
 -----

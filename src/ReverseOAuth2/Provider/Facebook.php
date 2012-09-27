@@ -5,7 +5,7 @@ namespace ReverseOAuth2\Provider;
 use \ReverseOAuth2\AbstractOAuth2Provider;
 use \Zend\Http\PhpEnvironment\Request;
 
-class Google extends AbstractOAuth2Provider
+class Facebook extends AbstractOAuth2Provider
 {
 
     
@@ -14,7 +14,6 @@ class Google extends AbstractOAuth2Provider
         
         $url = $this->options['auth_uri'].'?'
             . 'redirect_uri='  . urlencode($this->options['redirect_uri'])
-            . '&response_type=code'
             . '&client_id='    . $this->options['client_id']
             . '&state='        . $this->generateState()
             . $this->getScope();
@@ -39,23 +38,22 @@ class Google extends AbstractOAuth2Provider
                 'code'          => $request->getQuery('code'),
                 'client_id'     => $this->options['client_id'],
                 'client_secret' => $this->options['client_secret'],
-                'redirect_uri'  => $this->options['redirect_uri'],
-                'grant_type'    => 'authorization_code'
+                'redirect_uri'  => $this->options['redirect_uri']
             ));
             
-            $token = \Zend\Json\Decoder::decode($client->send()->getContent());
+            parse_str($client->send()->getContent(), $token);
             
-            if(isset($token->error)) {
+            if(isset($token['error'])) {
                 $this->error = (array)$token;
                 return false;
             } else {
                 $this->session->token = $token;
             }
-                        
-            return true;
-                
-        } else {
             
+            return true;
+            
+        } else {
+
             return false;
             
         }
@@ -67,19 +65,19 @@ class Google extends AbstractOAuth2Provider
     {
         
         if(is_object($this->session->info)) {
-
+        
             return $this->session->info;
-            
-        } elseif(isset($this->session->token->access_token)) {
-
-            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token->access_token;
+        
+        } elseif(isset($this->session->token['access_token'])) {
+        
+            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token['access_token'];
             $this->session->info = \Zend\Json\Decoder::decode(file_get_contents($urlProfile));
             return $this->session->info;
-
+        
         } else {
             
             return false;
-        
+            
         }
         
     }
@@ -88,7 +86,7 @@ class Google extends AbstractOAuth2Provider
     public function getScope()
     {
         if(count($this->options['scope']) > 0) {
-            $str = urlencode(implode(' ', $this->options['scope']));
+            $str = urlencode(implode(',', $this->options['scope']));
             return '&scope=' . $str;
         } else {
             return '';

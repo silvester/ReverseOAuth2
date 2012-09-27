@@ -9,6 +9,7 @@ abstract class AbstractOAuth2Provider
     
     protected $session;
     protected $options;
+    protected $error;
 
     public function __construct()
     {
@@ -50,6 +51,11 @@ abstract class AbstractOAuth2Provider
     public function setOptions($options)
     {
         $this->options = $options;
+    }
+    
+    public function getError()
+    {
+        return $this->error;
     }
     
 }
