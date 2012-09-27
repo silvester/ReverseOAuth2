@@ -5,7 +5,7 @@ Another OAuth2 provider for ZF2. It provides providers for github, google and fa
 
 Demo
 ----
-Minimum rights are used. If you feel intimidated revoke the rights.
+Minimum rights are used. If you feel intimidated revoke the rights. Click the login button. 
 
 Github: http://reverseform.modo.si/oauth-github
 
