@@ -1,14 +1,14 @@
 ReverseOAuth2
 ===========
 
-Another OAuth2 provider for ZF2. It provides providers for github and google, others soon to come.
+Another OAuth2 provider for ZF2. It provides providers for github, google and facebook others soon to come.
 
 Usage
 -----
 
 As usual add it to your application.config.php 'ReverseOAuth2'.
 
-Copy & rename the reverseoauth2.local.php.dist to your autoload and fill the information needed. 
+Copy & rename the config/reverseoauth2.local.php.dist to your autoload folder and fill the information needed. 
 
 ### In your controller/action do:
 
@@ -17,10 +17,18 @@ Copy & rename the reverseoauth2.local.php.dist to your autoload and fill the inf
 
         $me = $this->getServiceLocator()->get('ReverseOAuth2\Google');
         //$me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
+        //$me = $this->getServiceLocator()->get('ReverseOAuth2\Facebook');
 
         if (strlen($_GET['code']) > 10) {
-            $token = $me->getToken($this->request);
+        	
+        	if($me->getToken($this->request)) {
+        		$token = $me->getSessionToken(); // token in session
+        	} else {
+        		$token = $me->getError(); // last returned error (array)
+        	}
+            
             $info = $me->getInfo();
+            
         } else {
             $url = $me->getUrl();
         }

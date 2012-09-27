@@ -8,7 +8,6 @@ use \Zend\Http\PhpEnvironment\Request;
 class Github extends AbstractOAuth2Provider
 {
 
-    
     public function getUrl()
     {
         
@@ -62,6 +61,9 @@ class Github extends AbstractOAuth2Provider
     }
     
     
+    /**
+     * @return stdClass|false
+     */
     public function getInfo()
     {
         

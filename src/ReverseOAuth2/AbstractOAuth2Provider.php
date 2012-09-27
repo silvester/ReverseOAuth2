@@ -27,7 +27,7 @@ abstract class AbstractOAuth2Provider
         
     }
     
-    public function getUserInfo()
+    public function getInfo()
     {
         
     }
@@ -56,6 +56,11 @@ abstract class AbstractOAuth2Provider
     public function getError()
     {
         return $this->error;
+    }
+    
+    public function getSessionToken()
+    {
+        return $this->session->token;
     }
     
 }

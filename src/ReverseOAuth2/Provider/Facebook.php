@@ -8,7 +8,6 @@ use \Zend\Http\PhpEnvironment\Request;
 class Facebook extends AbstractOAuth2Provider
 {
 
-    
     public function getUrl()
     {
         
@@ -61,6 +60,9 @@ class Facebook extends AbstractOAuth2Provider
     }
     
     
+    /**
+     * @return stdClass|false
+     */
     public function getInfo()
     {
         
