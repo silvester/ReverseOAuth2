@@ -63,4 +63,9 @@ abstract class AbstractOAuth2Client
         return $this->session->token;
     }
     
+    public function getSessionContainer()
+    {
+        return $this->session;
+    }
+    
 }

@@ -54,6 +54,11 @@ class Github extends AbstractOAuth2Client
             
         } else {
 
+            $this->error = array(
+                'session-state' => $this->session->state,
+                'request-state' => $request->getQuery('state'),
+                'code'          => $request->getQuery('code')
+            );
             return false;
             
         }
