@@ -8,6 +8,8 @@ use \Zend\Http\PhpEnvironment\Request;
 class Facebook extends AbstractOAuth2Client
 {
 
+    protected $providerName = 'facebook';
+    
     public function getUrl()
     {
         

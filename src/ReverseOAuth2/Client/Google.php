@@ -7,6 +7,8 @@ use \Zend\Http\PhpEnvironment\Request;
 
 class Google extends AbstractOAuth2Client
 {
+    
+    protected $providerName = 'google';
 
     public function getUrl()
     {

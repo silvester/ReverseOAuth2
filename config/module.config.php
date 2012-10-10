@@ -3,6 +3,7 @@
 return array(
     
     'service_manager' => array(
+        
         'factories' => array(
             
             'ReverseOAuth2\Google' => function ($sm) {
@@ -26,7 +27,12 @@ return array(
                 return $me;
             }
             
-        )
+        ),
+        
+        'invokables' => array(
+            'ReverseOAuth2\Auth\Adapter' => 'ReverseOAuth2\Authentication\Adapter\ReverseOAuth2',  
+        ),
+        
     ),
     
     'reverseoauth2' => array(

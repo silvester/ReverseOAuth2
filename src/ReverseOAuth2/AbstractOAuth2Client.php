@@ -68,4 +68,9 @@ abstract class AbstractOAuth2Client
         return $this->session;
     }
     
+    public function getProvider()
+    {
+        return $this->providerName;
+    }
+    
 }

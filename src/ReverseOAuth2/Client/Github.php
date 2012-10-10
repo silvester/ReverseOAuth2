@@ -8,6 +8,8 @@ use \Zend\Http\PhpEnvironment\Request;
 class Github extends AbstractOAuth2Client
 {
 
+    protected $providerName = 'github';
+    
     public function getUrl()
     {
         
