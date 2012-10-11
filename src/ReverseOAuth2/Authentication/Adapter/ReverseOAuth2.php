@@ -20,20 +20,23 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
         if($oauth2 instanceof AbstractOAuth2Client) {
             $this->client = $oauth2;
         }
+        
     }
     
     public function authenticate()
     {
         
-        if(is_object($this->client->getInfo())) { 
+        if(is_object($this->client) AND is_object($this->client->getInfo())) { 
             
-            $rs = $this->getEventManager()->prepareArgs((array)$this->client->getInfo());
+            $args['code'] = Result::SUCCESS;
+            $args['info'] = (array)$this->client->getInfo();
+            $args['provider'] = $this->client->getProvider();
             
-            $this->getEventManager()->trigger(
-                'oauth2.success', $this, array('provider' => $this->client->getProvider(), 'rs' => $rs)
-            );
-            
-            return new Result(Result::SUCCESS, $rs);
+            $args = $this->getEventManager()->prepareArgs($args);
+
+            $this->getEventManager()->trigger('oauth2.success', $this, $args);
+                        
+            return new Result($args['code'], $args['info']);
             
         } else {
             
