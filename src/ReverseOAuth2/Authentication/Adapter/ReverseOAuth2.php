@@ -13,7 +13,6 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
 {
     
     protected $client;
-    protected $rs;
     protected $sharedEventManager;   
     
     public function setOAuth2Client($oauth2)
@@ -28,13 +27,13 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
         
         if(is_object($this->client->getInfo())) { 
             
-            $this->rs = $this->client->getInfo();
-
+            $rs = $this->getEventManager()->prepareArgs((array)$this->client->getInfo());
+            
             $this->getEventManager()->trigger(
-                'oauth2.success', $this, array('provider' => $this->client->getProvider())
+                'oauth2.success', $this, array('provider' => $this->client->getProvider(), 'rs' => $rs)
             );
             
-            return new Result(Result::SUCCESS, (array) $this->rs);
+            return new Result(Result::SUCCESS, $rs);
             
         } else {
             
@@ -42,18 +41,7 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
             
         }
         
-    }
-    
-    public function getRs()
-    {
-        return $this->rs;
-    }
-    
-    public function setRs($rs)
-    {
-        $this->rs = $rs;
-    }
-    
+    }    
     
     public function setEventManager(EventManagerInterface $events)
     {

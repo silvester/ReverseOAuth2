@@ -29,7 +29,20 @@ abstract class AbstractOAuth2Client
     
     public function getInfo()
     {
-        
+        if(is_object($this->session->info)) {
+            return $this->session->info;
+        } elseif(isset($this->session->token->access_token)) {
+            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token->access_token;
+            $retVal = file_get_contents($urlProfile);
+            if(strlen(trim($retVal)) > 0) {
+                $this->session->info = \Zend\Json\Decoder::decode($retVal);
+                return $this->session->info;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
     
     public function getScope()

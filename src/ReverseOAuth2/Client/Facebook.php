@@ -44,13 +44,16 @@ class Facebook extends AbstractOAuth2Client
             
             parse_str($client->send()->getContent(), $token);
             
-            if(isset($token['error'])) {
-                $this->error = (array)$token;
+            if(is_array($token) AND isset($token['access_token']) AND $token['expires'] > 0) {
+                $this->session->token = (object)$token;
+            } elseif(is_array($token) AND isset($token['error'])) {
+                $this->error = $token;
                 return false;
             } else {
-                $this->session->token = $token;
+                $this->error = 'Facebook service not available.';
+                return false;
             }
-            
+                        
             return true;
             
         } else {
@@ -70,6 +73,7 @@ class Facebook extends AbstractOAuth2Client
     /**
      * @return stdClass|false
      */
+    /*
     public function getInfo()
     {
         
@@ -90,6 +94,7 @@ class Facebook extends AbstractOAuth2Client
         }
         
     }
+    */
     
     
     public function getScope()

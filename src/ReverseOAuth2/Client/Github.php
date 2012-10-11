@@ -43,15 +43,18 @@ class Github extends AbstractOAuth2Client
                 'state'         => $this->getState()
             ));
             
-            parse_str($client->send()->getContent(), $token);
+            parse_str($client->send()->getContent(), $token);      
             
-            if(isset($token['error'])) {
-                $this->error = (array)$token;
+            if(is_array($token) AND isset($token['access_token'])) {
+                $this->session->token = (object)$token;
+            } elseif(is_array($token) AND isset($token['error'])) {
+                $this->error = $token;
                 return false;
             } else {
-                $this->session->token = $token;
+                $this->error = 'Github service not available.';
+                return false;
             }
-            
+
             return true;
             
         } else {
@@ -61,31 +64,6 @@ class Github extends AbstractOAuth2Client
                 'request-state' => $request->getQuery('state'),
                 'code'          => $request->getQuery('code')
             );
-            return false;
-            
-        }
-        
-    }
-    
-    
-    /**
-     * @return stdClass|false
-     */
-    public function getInfo()
-    {
-        
-        if(is_object($this->session->info)) {
-        
-            return $this->session->info;
-        
-        } elseif(isset($this->session->token['access_token'])) {
-        
-            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token['access_token'];
-            $this->session->info = \Zend\Json\Decoder::decode(file_get_contents($urlProfile));
-            return $this->session->info;
-        
-        } else {
-            
             return false;
             
         }
