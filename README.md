@@ -21,7 +21,7 @@ As usual add it to your application.config.php 'ReverseOAuth2'.
 Copy & rename the `config/reverseoauth2.local.php.dist` to your autoload folder and fill the information needed. 
 
 ### In your controller/action do:
-
+```php
     public function callbackAction()
     {
 
@@ -48,7 +48,8 @@ Copy & rename the `config/reverseoauth2.local.php.dist` to your autoload folder 
         return array('token' => $token, 'info' => $info, 'url' => $url);
 
     }
-    
+```
+
 The action name depends on your settings. getUrl() will return the url where you should redirect the user, there is no automatic redirection do it yourself.
 
 ### The ReverseOAuth2 authentication adapter
@@ -70,11 +71,9 @@ The module provides also an zend\authentication\adapter.
             } else {
                 $token = $me->getError(); // last returned error (array)
             }
-    
-            $info = $me->getInfo();
             
             $adapter = $this->getServiceLocator()->get('ReverseOAuth2\Auth\Adapter'); // added in module.config.php
-            $adapter->setOAuth2Client($me);
+            $adapter->setOAuth2Client($me); // $me is the oauth2 client
             $rs = $auth->authenticate($adapter); // provides an eventManager 'oauth2.success'
             
             if (!$rs->isValid()) {
@@ -92,8 +91,6 @@ The module provides also an zend\authentication\adapter.
     
         $view = new ViewModel(array('token' => $token, 'info' => $info, 'url' => $url, 'error' => $me->getError()));
         
-        $view->setTemplate('album/oauth/callback');
-        
         return $view;
     
     }
@@ -107,7 +104,7 @@ In your module class you could do:
 ```php
     public function onBootstrap(Event $e)
     {
-        
+        /* Some bad code here, only for demo purposes. */
         $userTable = new UserTable($e->getApplication()->getServiceManager()->get('Zend\Db\Adapter\Adapter')); // my user table
         $e->getApplication()->getServiceManager()->get('ReverseOAuth2\Auth\Adapter')->getEventManager() // the the adapters eventmanager
             ->attach('oauth2.success', //attach to the event
@@ -127,11 +124,8 @@ In your module class you could do:
                     } else {
                         
                         $user = new User;
-                        
                         $user->token = $params['token']['access_token'];
-                        
                         $expire = (isset($params['token']['expires'])) ? $params['token']['expires'] : 3600;
-                        
                         $user->token_valid = new \Zend\Db\Sql\Expression('DATE_ADD(NOW(), INTERVAL '.$expire.' SECOND)');
                         $user->date_update = new \Zend\Db\Sql\Expression('NOW()');
                         $user->date_create = new \Zend\Db\Sql\Expression('NOW()');
@@ -149,6 +143,8 @@ In your module class you could do:
                     $params['info']['info'] = false;
         
         			// here the params info is rewitten. The result object returned from the auth object will have the db row.
+        			
+        			$params['code'] = \Zend\Authentication\Result::FAILURE; // this would deny authentication. default is \Zend\Authentication\Result::SUCCESS.
         
                 });
 
