@@ -18,7 +18,7 @@ Usage
 
 As usual add it to your application.config.php 'ReverseOAuth2'.
 
-Copy & rename the config/reverseoauth2.local.php.dist to your autoload folder and fill the information needed. 
+Copy & rename the `config/reverseoauth2.local.php.dist` to your autoload folder and fill the information needed. 
 
 ### In your controller/action do:
 
@@ -51,6 +51,109 @@ Copy & rename the config/reverseoauth2.local.php.dist to your autoload folder an
     
 The action name depends on your settings. getUrl() will return the url where you should redirect the user, there is no automatic redirection do it yourself.
 
+### The ReverseOAuth2 authentication adapter
+
+The module provides also an zend\authentication\adapter.
+
+```php
+    public function authGithubAction() // controller action
+    {
+    
+        $me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
+    
+        $auth = new AuthenticationService(); // zend
+        
+        if (strlen($_GET['code']) > 10) {
+             
+            if($me->getToken($this->request)) { // if getToken is true, the user has authenticated successfully by the provider, not yet by us.
+                $token = $me->getSessionToken(); // token in session
+            } else {
+                $token = $me->getError(); // last returned error (array)
+            }
+    
+            $info = $me->getInfo();
+            
+            $adapter = $this->getServiceLocator()->get('ReverseOAuth2\Auth\Adapter'); // added in module.config.php
+            $adapter->setOAuth2Client($me);
+            $rs = $auth->authenticate($adapter); // provides an eventManager 'oauth2.success'
+            
+            if (!$rs->isValid()) {
+                foreach ($rs->getMessages() as $message) {
+                    echo "$message\n";
+                }
+                echo 'no valid';
+            } else {
+                echo 'valid';
+            }
+    
+        } else {
+            $url = $me->getUrl();
+        }
+    
+        $view = new ViewModel(array('token' => $token, 'info' => $info, 'url' => $url, 'error' => $me->getError()));
+        
+        $view->setTemplate('album/oauth/callback');
+        
+        return $view;
+    
+    }
+```
+
+The adapter also provides an event called `oauth2.success`. Here you can check the data from the client against your user registry. You will be provided with
+information from the user, token info and provider type.
+
+In your module class you could do:
+
+```php
+    public function onBootstrap(Event $e)
+    {
+        
+        $userTable = new UserTable($e->getApplication()->getServiceManager()->get('Zend\Db\Adapter\Adapter')); // my user table
+        $e->getApplication()->getServiceManager()->get('ReverseOAuth2\Auth\Adapter')->getEventManager() // the the adapters eventmanager
+            ->attach('oauth2.success', //attach to the event
+                function($e) use ($userTable){
+                    
+                    $params = $e->getParams(); //print_r($params); so you see whats in if
+                    
+                    if($user = $userTable->getUserByRemote($params['provider'], $params['info']['id'])) { // check for user from facebook with id 1000
+        
+                        $user->token = $params['token']['access_token'];
+                        $expire = (isset($params['token']['expires'])) ? $params['token']['expires'] : 3600;
+                        $user->token_valid = new \Zend\Db\Sql\Expression('DATE_ADD(NOW(), INTERVAL '.$expire.' SECOND)');
+                        $user->date_update = new \Zend\Db\Sql\Expression('NOW()');
+                        
+                        $userTable->saveUser($user);
+                                        
+                    } else {
+                        
+                        $user = new User;
+                        
+                        $user->token = $params['token']['access_token'];
+                        
+                        $expire = (isset($params['token']['expires'])) ? $params['token']['expires'] : 3600;
+                        
+                        $user->token_valid = new \Zend\Db\Sql\Expression('DATE_ADD(NOW(), INTERVAL '.$expire.' SECOND)');
+                        $user->date_update = new \Zend\Db\Sql\Expression('NOW()');
+                        $user->date_create = new \Zend\Db\Sql\Expression('NOW()');
+                        $user->remote_source = $params['provider'];
+                        $user->remote_id = $params['info']['id'];
+                        $user->name = $params['info']['name'];
+                        $user->info = \Zend\Json\Encoder::encode($params['info']);
+                        
+                        $userTable->saveUser($user);
+                        
+                    }
+                    
+                    $user = $userTable->getUserByRemote($params['provider'], $params['info']['id']);
+                    $params['info'] = $user->getArrayCopy();
+                    $params['info']['info'] = false;
+        
+        			// here the params info is rewitten. The result object returned from the auth object will have the db row.
+        
+                });
+
+    }
+```
 
 TODO
 ----

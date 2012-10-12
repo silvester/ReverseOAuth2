@@ -31,6 +31,7 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
             $args['code'] = Result::SUCCESS;
             $args['info'] = (array)$this->client->getInfo();
             $args['provider'] = $this->client->getProvider();
+            $args['token'] = (array)$this->client->getSessionToken();
             
             $args = $this->getEventManager()->prepareArgs($args);
 
