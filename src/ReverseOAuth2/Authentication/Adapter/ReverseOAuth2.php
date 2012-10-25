@@ -13,7 +13,7 @@ class ReverseOAuth2 implements AdapterInterface, EventManagerAwareInterface
 {
     
     protected $client;
-    protected $sharedEventManager;   
+    protected $events;   
     
     public function setOAuth2Client($oauth2)
     {
