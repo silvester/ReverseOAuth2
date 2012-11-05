@@ -29,7 +29,7 @@ Copy & rename the `config/reverseoauth2.local.php.dist` to your autoload folder 
         //$me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
         //$me = $this->getServiceLocator()->get('ReverseOAuth2\Facebook');
 
-        if (strlen($_GET['code']) > 10) {
+        if (strlen($this->params()->fromQuery('code')) > 10) {
         	
         	if($me->getToken($this->request)) {
         		$token = $me->getSessionToken(); // token in session
@@ -64,7 +64,7 @@ The module provides also an zend\authentication\adapter.
     
         $auth = new AuthenticationService(); // zend
         
-        if (strlen($_GET['code']) > 10) {
+        if (strlen($this->params()->fromQuery('code')) > 10) {
              
             if($me->getToken($this->request)) { // if getToken is true, the user has authenticated successfully by the provider, not yet by us.
                 $token = $me->getSessionToken(); // token in session
