@@ -70,15 +70,4 @@ class Github extends AbstractOAuth2Client
         
     }
     
-    
-    public function getScope()
-    {
-        if(count($this->options['scope']) > 0) {
-            $str = urlencode(implode(',', $this->options['scope']));
-            return '&scope=' . $str;
-        } else {
-            return '';
-        }
-    }
-    
 }
