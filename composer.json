@@ -1,0 +1,19 @@
+{
+    "name": "silvester/reverse-oauth2",
+    "description": "Oauth2 client for zf2. Facebook, github and google is supported.",
+    "minimum-stability": "dev",
+    "type" : "module",
+    "homepage" : "https://github.com/silvester/ReverseOAuth2",
+    "keywords" : ["oauth2", "zf2", "module"],
+    "authors": [
+        {
+            "name": "Silvester Maraz",
+            "email": "silvester.maraz@reverse.si",
+            "homepage": "http://maraz.org"
+        }
+    ],
+    "require": {
+		"php": ">=5.3.2",
+        "zendframework/zendframework": "dev-master"
+    }
+}
