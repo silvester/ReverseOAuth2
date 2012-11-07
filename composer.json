@@ -16,5 +16,13 @@
     "require": {
 		"php": ">=5.3.2",
         "zendframework/zendframework": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "ReverseOAuth2": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
     }
 }
