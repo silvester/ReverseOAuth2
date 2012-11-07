@@ -5,6 +5,7 @@
     "type" : "module",
     "homepage" : "https://github.com/silvester/ReverseOAuth2",
     "keywords" : ["oauth2", "zf2", "module"],
+    "license" : "MIT",
     "authors": [
         {
             "name": "Silvester Maraz",
