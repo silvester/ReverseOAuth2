@@ -69,42 +69,4 @@ class Facebook extends AbstractOAuth2Client
         
     }
     
-    
-    /**
-     * @return stdClass|false
-     */
-    /*
-    public function getInfo()
-    {
-        
-        if(is_object($this->session->info)) {
-        
-            return $this->session->info;
-        
-        } elseif(isset($this->session->token['access_token'])) {
-        
-            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token['access_token'];
-            $this->session->info = \Zend\Json\Decoder::decode(file_get_contents($urlProfile));
-            return $this->session->info;
-        
-        } else {
-            
-            return false;
-            
-        }
-        
-    }
-    */
-    
-    
-    public function getScope()
-    {
-        if(count($this->options['scope']) > 0) {
-            $str = urlencode(implode(',', $this->options['scope']));
-            return '&scope=' . $str;
-        } else {
-            return '';
-        }
-    }
-    
 }
