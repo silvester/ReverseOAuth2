@@ -13,7 +13,11 @@ class TestTest extends PHPUnit_Framework_TestCase
     
     public function testSetEventManagerWorks()
     {
+        
+        $me = new \ReverseOAuth2\ClientOptions(array('some'));
+        
         $this->assertSame('me', 'me');
+        
     }
     
 }
