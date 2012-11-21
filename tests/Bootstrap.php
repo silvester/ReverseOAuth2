@@ -1,4 +1,5 @@
 <?php
+
 namespace ReverseOAuth2Test;
 
 use Zend\Loader\AutoloaderFactory;
