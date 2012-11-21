@@ -1,4 +1,4 @@
-<phpunit bootstrap="./Bootstrap.php" colors="true">
+<phpunit bootstrap="Bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="ReverseOAuth2 Module Tests">
             <directory>./ReverseOAuth2Test</directory>
