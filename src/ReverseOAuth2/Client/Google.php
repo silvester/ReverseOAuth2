@@ -2,8 +2,9 @@
 
 namespace ReverseOAuth2\Client;
 
-use \ReverseOAuth2\AbstractOAuth2Client;
-use \Zend\Http\PhpEnvironment\Request;
+use ReverseOAuth2\AbstractOAuth2Client;
+use ReverseOAuth2\ClientOptions;
+use Zend\Http\PhpEnvironment\Request;
 
 class Google extends AbstractOAuth2Client
 {
@@ -13,10 +14,10 @@ class Google extends AbstractOAuth2Client
     public function getUrl()
     {
         
-        $url = $this->options['auth_uri'].'?'
-            . 'redirect_uri='  . urlencode($this->options['redirect_uri'])
+        $url = $this->options->getAuthUri().'?'
+            . 'redirect_uri='  . urlencode($this->options->getRedirectUri())
             . '&response_type=code'
-            . '&client_id='    . $this->options['client_id']
+            . '&client_id='    . $this->options->getClientId()
             . '&state='        . $this->generateState()
             . $this->getScope();
 
@@ -34,13 +35,13 @@ class Google extends AbstractOAuth2Client
             
         } elseif($this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
             
-            $client = new \Zend\Http\Client($this->options['token_uri'], array('timeout' => 30, 'adapter' => 'Zend\Http\Client\Adapter\Curl'));
+            $client = new \Zend\Http\Client($this->options->getTokenUri(), array('timeout' => 30, 'adapter' => 'Zend\Http\Client\Adapter\Curl'));
             $client->setMethod(Request::METHOD_POST);
             $client->setParameterPost(array(
                 'code'          => $request->getQuery('code'),
-                'client_id'     => $this->options['client_id'],
-                'client_secret' => $this->options['client_secret'],
-                'redirect_uri'  => $this->options['redirect_uri'],
+                'client_id'     => $this->options->getClientId(),
+                'client_secret' => $this->options->getClientSecret(),
+                'redirect_uri'  => $this->options->getRedirectUri(),
                 'grant_type'    => 'authorization_code'
             ));
             
@@ -74,8 +75,8 @@ class Google extends AbstractOAuth2Client
     
     public function getScope()
     {
-        if(count($this->options['scope']) > 0) {
-            $str = urlencode(implode(' ', $this->options['scope']));
+        if(count($this->options->getScope()) > 0) {
+            $str = urlencode(implode(' ', $this->options->getScope()));
             return '&scope=' . $str;
         } else {
             return '';

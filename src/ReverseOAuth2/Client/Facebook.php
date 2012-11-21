@@ -13,9 +13,9 @@ class Facebook extends AbstractOAuth2Client
     public function getUrl()
     {
         
-        $url = $this->options['auth_uri'].'?'
-            . 'redirect_uri='  . urlencode($this->options['redirect_uri'])
-            . '&client_id='    . $this->options['client_id']
+        $url = $this->options->getAuthUri().'?'
+            . 'redirect_uri='  . urlencode($this->options->getRedirectUri())
+            . '&client_id='    . $this->options->getClientId()
             . '&state='        . $this->generateState()
             . $this->getScope();
 
@@ -33,13 +33,13 @@ class Facebook extends AbstractOAuth2Client
             
         } elseif($this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
             
-            $client = new \Zend\Http\Client($this->options['token_uri'], array('timeout' => 30, 'adapter' => 'Zend\Http\Client\Adapter\Curl'));
+            $client = new \Zend\Http\Client($this->options->getTokenUri(), array('timeout' => 30, 'adapter' => 'Zend\Http\Client\Adapter\Curl'));
             $client->setMethod(Request::METHOD_POST);
             $client->setParameterPost(array(
                 'code'          => $request->getQuery('code'),
-                'client_id'     => $this->options['client_id'],
-                'client_secret' => $this->options['client_secret'],
-                'redirect_uri'  => $this->options['redirect_uri']
+                'client_id'     => $this->options->getClientId(),
+                'client_secret' => $this->options->getClientSecret(),
+                'redirect_uri'  => $this->options->getRedirectUri()
             ));
             
             parse_str($client->send()->getContent(), $token);
@@ -70,37 +70,10 @@ class Facebook extends AbstractOAuth2Client
     }
     
     
-    /**
-     * @return stdClass|false
-     */
-    /*
-    public function getInfo()
-    {
-        
-        if(is_object($this->session->info)) {
-        
-            return $this->session->info;
-        
-        } elseif(isset($this->session->token['access_token'])) {
-        
-            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token['access_token'];
-            $this->session->info = \Zend\Json\Decoder::decode(file_get_contents($urlProfile));
-            return $this->session->info;
-        
-        } else {
-            
-            return false;
-            
-        }
-        
-    }
-    */
-    
-    
     public function getScope()
     {
-        if(count($this->options['scope']) > 0) {
-            $str = urlencode(implode(',', $this->options['scope']));
+        if(count($this->options->getScope()) > 0) {
+            $str = urlencode(implode(',', $this->options->getScope()));
             return '&scope=' . $str;
         } else {
             return '';

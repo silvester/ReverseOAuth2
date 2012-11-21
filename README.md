@@ -30,11 +30,11 @@ $ php composer.phar update
 3. Enable it in your `config/application.config.php` file:
 ```php
 return array(
-    'modules' => array(
-        // ...
-        'ReverseOAuth2',
-    ),
-    // ...
+	'modules' => array(
+		// ...
+		'ReverseOAuth2',
+	),
+	// ...
 );
 ```
 
@@ -76,6 +76,29 @@ public function callbackAction()
 ```
 
 The action name depends on your settings. getUrl() will return the url where you should redirect the user, there is no automatic redirection do it yourself.
+
+### Client Configuration
+
+Beside the configuration options in `module.config.php` and `reverseoath2.local.php` you can change the client configuration on runtime.
+
+```php
+public function callbackAction()
+{
+
+    $me = $this->getServiceLocator()->get('ReverseOAuth2\Google');
+    //$me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
+    //$me = $this->getServiceLocator()->get('ReverseOAuth2\Facebook');
+
+	$me->getOptions()->setScope(array('email', 'user'));
+	$me->getOptions()->setAuthUri('http://google.com/');
+	$me->getOptions()->setTokenUri('http://google.com/');
+	$me->getOptions()->setInfoUri('http://google.com/');
+	$me->getOptions()->setClientId('my-id.com');
+	$me->getOptions()->setClientSecret('my-secret');
+	$me->getOptions()->setRedirectUri('http://my-server.com/');
+
+}
+```
 
 ### The ReverseOAuth2 authentication adapter
 

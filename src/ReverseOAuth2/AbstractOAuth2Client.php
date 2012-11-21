@@ -3,17 +3,27 @@
 namespace ReverseOAuth2;
 
 use Zend\Http\PhpEnvironment\Request;
+use Zend\Session\Container;
+use ReverseOAuth2\ClientOptions;
 
 abstract class AbstractOAuth2Client
 {
     
+    /**
+     * @var Zend\Session\Container
+     */
     protected $session;
+    
+    /**
+     * @var ReverseOAuth2\ClientOptions
+     */
     protected $options;
+    
     protected $error;
 
     public function __construct()
     {
-        $this->session = new \Zend\Session\Container('ReverseOAuth2_'.get_class($this));
+        $this->session = new Container('ReverseOAuth2_'.get_class($this));
     }
     
     public function getUrl()
@@ -32,7 +42,7 @@ abstract class AbstractOAuth2Client
         if(is_object($this->session->info)) {
             return $this->session->info;
         } elseif(isset($this->session->token->access_token)) {
-            $urlProfile = $this->options['info_uri'] . '?access_token='.$this->session->token->access_token;
+            $urlProfile = $this->options->getInfoUri() . '?access_token='.$this->session->token->access_token;
             $retVal = file_get_contents($urlProfile);
             if(strlen(trim($retVal)) > 0) {
                 $this->session->info = \Zend\Json\Decoder::decode($retVal);
@@ -61,9 +71,14 @@ abstract class AbstractOAuth2Client
         return $this->session->state;
     }
     
-    public function setOptions($options)
+    public function setOptions(ClientOptions $options)
     {
         $this->options = $options;
+    }
+    
+    public function getOptions()
+    {
+        return $this->options;
     }
     
     public function getError()
