@@ -16,6 +16,10 @@ class TestTest extends PHPUnit_Framework_TestCase
         
         $me = new \ReverseOAuth2\ClientOptions(array('some'));
         
+        $mocked = $this->getMock('\ReverseOAuth2\ClientOptions');
+
+        print_r($mocked);
+        
         $this->assertSame('me', 'me');
         
     }
