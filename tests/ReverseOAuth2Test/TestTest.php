@@ -14,7 +14,7 @@ class TestTest extends PHPUnit_Framework_TestCase
     public function testSetEventManagerWorks()
     {
         
-        $me = new \ReverseOAuth2\ClientOptions(array('some'));
+        //$me = new \ReverseOAuth2\ClientOptions(array('some'));
         
         $mocked = $this->getMock('\ReverseOAuth2\ClientOptions');
 
