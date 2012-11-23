@@ -66,7 +66,7 @@ class Bootstrap
             $loader = include $vendorPath . '/autoload.php';
         }
 
-        $zf2Path = getenv('ZF2_PATH') ?: (defined('ZF2_PATH') ? ZF2_PATH : (is_dir($vendorPath . '/ZF2/library') ? $vendorPath . '/ZF2/library' : false));
+        //$zf2Path = getenv('ZF2_PATH') ?: (defined('ZF2_PATH') ? ZF2_PATH : (is_dir($vendorPath . '/ZF2/library') ? $vendorPath . '/ZF2/library' : false));
 	    //$zf2Path = "./vendor/zf2/library";
 	    
         if (!$zf2Path) {
