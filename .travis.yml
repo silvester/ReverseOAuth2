@@ -5,7 +5,7 @@ php:
     - 5.4
     
 env:
-    - ZF2_PATH=./zf2/library
+    - ZF2_PATH=./vendor/zf2/library
     
 before_install:
     - cd tests; git clone --depth=1 https://github.com/zendframework/zf2.git

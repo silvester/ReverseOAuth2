@@ -44,7 +44,10 @@ return array(
              ),
             'auth_uri'      => 'https://accounts.google.com/o/oauth2/auth',
             'token_uri'     => 'https://accounts.google.com/o/oauth2/token',
-            'info_uri'      => 'https://www.googleapis.com/oauth2/v1/userinfo'
+            'info_uri'      => 'https://www.googleapis.com/oauth2/v1/userinfo',
+            'client_id'     => 'your id',
+            'client_secret' => 'your secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
         ),
         
         'facebook' => array(
@@ -57,9 +60,12 @@ return array(
                 //'...'
                 */
              ),
-            'auth_uri'        => 'https://www.facebook.com/dialog/oauth',
-            'token_uri'       => 'https://graph.facebook.com/oauth/access_token',
-            'info_uri'        => 'https://graph.facebook.com/me'
+            'auth_uri'      => 'https://www.facebook.com/dialog/oauth',
+            'token_uri'     => 'https://graph.facebook.com/oauth/access_token',
+            'info_uri'      => 'https://graph.facebook.com/me',
+            'client_id'     => 'your id',
+            'client_secret' => 'your secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
         ),
             
         'github' => array(
@@ -73,9 +79,12 @@ return array(
                 'gist'
                 */
             ),
-            'auth_uri'        => 'https://github.com/login/oauth/authorize',
-            'token_uri'       => 'https://github.com/login/oauth/access_token',
-            'info_uri'        => 'https://api.github.com/user'
+            'auth_uri'      => 'https://github.com/login/oauth/authorize',
+            'token_uri'     => 'https://github.com/login/oauth/access_token',
+            'info_uri'      => 'https://api.github.com/user',
+            'client_id'     => 'your id',
+            'client_secret' => 'your secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
         ),
         
     )
