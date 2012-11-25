@@ -1,6 +1,8 @@
 ReverseOAuth2
 ===========
 
+[![Build Status](https://secure.travis-ci.org/silvester/ReverseOAuth2.png?branch=master-tested)](https://travis-ci.org/silvester/ReverseOAuth2)
+
 Another OAuth2 client for ZF2. It provides clients for github, google and facebook others soon to come.
 
 Demo
