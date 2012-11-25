@@ -66,12 +66,10 @@ class Bootstrap
             $loader = include $vendorPath . '/autoload.php';
         }
 
-        //$zf2Path = getenv('ZF2_PATH') ?: (defined('ZF2_PATH') ? ZF2_PATH : (is_dir($vendorPath . '/ZF2/library') ? $vendorPath . '/ZF2/library' : false));
-	    //$zf2Path = "./vendor/zf2/library";
+        $zf2Path = getenv('ZF2_PATH');
 	    
         if (!$zf2Path) {
-            //throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
-            $zf2Path = "./vendor/zf2/library";
+            $zf2Path = "../../zendframework/library";
         }
 
         if (isset($loader)) {
