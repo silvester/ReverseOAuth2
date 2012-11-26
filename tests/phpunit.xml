@@ -1,7 +1,15 @@
 <phpunit bootstrap="Bootstrap.php" colors="true">
-    <testsuites>
-        <testsuite name="ReverseOAuth2 Module Tests">
-            <directory>./ReverseOAuth2Test</directory>
-        </testsuite>
-    </testsuites>
+	<testsuites>
+		<testsuite name="ReverseOAuth2 Module Tests">
+			<directory>./ReverseOAuth2Test</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">../</directory>
+			<exclude>
+			    <directory suffix=".php">../tests</directory>
+			</exclude>
+		</whitelist>
+	</filter>
 </phpunit>

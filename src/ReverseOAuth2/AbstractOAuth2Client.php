@@ -5,6 +5,7 @@ namespace ReverseOAuth2;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Session\Container;
 use ReverseOAuth2\ClientOptions;
+use ReverseOAuth2\OAuht2HttpClient;
 
 abstract class AbstractOAuth2Client
 {
@@ -20,6 +21,11 @@ abstract class AbstractOAuth2Client
     protected $options;
     
     protected $error;
+    
+    /**
+     * @var ReverseOAuth2\OAuth2HttpClient
+     */
+    protected $httpClient;
 
     public function __construct()
     {
@@ -99,6 +105,26 @@ abstract class AbstractOAuth2Client
     public function getProvider()
     {
         return $this->providerName;
+    }
+    
+    public function setHttpClient($client)
+    {
+        if($client instanceof OAuth2HttpClient) {
+            $this->httpClient = $client;
+        } else {
+            throw new Exception\HttpClientException('Passed HTTP client is not supported.');
+        }
+    }
+    
+    public function getHttpClient()
+    {
+        
+        if(!$this->httpClient) {
+            $this->httpClient = new OAuth2HttpClient(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'));
+        }
+        
+        return $this->httpClient;
+        
     }
     
 }

@@ -32,9 +32,13 @@ class Facebook extends AbstractOAuth2Client
             return true;
             
         } elseif($this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
+                     
+            $client = $this->getHttpClient();
             
-            $client = new \Zend\Http\Client($this->options->getTokenUri(), array('timeout' => 30, 'adapter' => 'Zend\Http\Client\Adapter\Curl'));
+            $client->setUri($this->options->getTokenUri());
+            
             $client->setMethod(Request::METHOD_POST);
+            
             $client->setParameterPost(array(
                 'code'          => $request->getQuery('code'),
                 'client_id'     => $this->options->getClientId(),
@@ -50,7 +54,7 @@ class Facebook extends AbstractOAuth2Client
                 $this->error = $token;
                 return false;
             } else {
-                $this->error = 'Facebook service not available.';
+                $this->error = array('internal-error' => 'Facebook service not available.');
                 return false;
             }
                         
@@ -59,6 +63,7 @@ class Facebook extends AbstractOAuth2Client
         } else {
 
             $this->error = array(
+                'internal-error'=> 'State error, request variables do not match the session variables.',
                 'session-state' => $this->session->state,
                 'request-state' => $request->getQuery('state'),
                 'code'          => $request->getQuery('code')
