@@ -19,7 +19,7 @@ class Google extends AbstractOAuth2Client
             . '&response_type=code'
             . '&client_id='    . $this->options->getClientId()
             . '&state='        . $this->generateState()
-            . $this->getScope();
+            . $this->getScope(' ');
 
         return $url;
         
@@ -70,17 +70,6 @@ class Google extends AbstractOAuth2Client
             
         }
         
-    }
-    
-    
-    public function getScope()
-    {
-        if(count($this->options->getScope()) > 0) {
-            $str = urlencode(implode(' ', $this->options->getScope()));
-            return '&scope=' . $str;
-        } else {
-            return '';
-        }
     }
     
 }

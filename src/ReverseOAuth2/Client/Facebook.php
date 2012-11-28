@@ -17,7 +17,7 @@ class Facebook extends AbstractOAuth2Client
             . 'redirect_uri='  . urlencode($this->options->getRedirectUri())
             . '&client_id='    . $this->options->getClientId()
             . '&state='        . $this->generateState()
-            . $this->getScope();
+            . $this->getScope(',');
 
         return $url;
         
@@ -46,20 +46,38 @@ class Facebook extends AbstractOAuth2Client
                 'redirect_uri'  => $this->options->getRedirectUri()
             ));
             
-            parse_str($client->send()->getContent(), $token);
+            $retVal = $client->send()->getContent();
+            
+            parse_str($retVal, $token);
             
             if(is_array($token) AND isset($token['access_token']) AND $token['expires'] > 0) {
+                
                 $this->session->token = (object)$token;
-            } elseif(is_array($token) AND isset($token['error'])) {
-                $this->error = $token;
-                return false;
+                return true;
+                
             } else {
-                $this->error = array('internal-error' => 'Facebook service not available.');
+                
+                try {
+                    
+                    $error = \Zend\Json\Decoder::decode($retVal);
+                    $this->error = array(
+                        'internal-error' => 'Facebook settings error.',
+                        'message' => $error->error->message,
+                        'type' => $error->error->type,
+                        'code' => $error->error->code
+                    );
+                    
+                } catch(\Zend\Json\Exception\RuntimeException $e) {
+                    
+                    $this->error = $token;
+                    $this->error['internal-error'] = 'Unknown error.';
+                                        
+                }
+                
                 return false;
+                
             }
-                        
-            return true;
-            
+
         } else {
 
             $this->error = array(
@@ -68,21 +86,11 @@ class Facebook extends AbstractOAuth2Client
                 'request-state' => $request->getQuery('state'),
                 'code'          => $request->getQuery('code')
             );
+            
             return false;
             
         }
         
-    }
-    
-    
-    public function getScope()
-    {
-        if(count($this->options->getScope()) > 0) {
-            $str = urlencode(implode(',', $this->options->getScope()));
-            return '&scope=' . $str;
-        } else {
-            return '';
-        }
     }
     
 }

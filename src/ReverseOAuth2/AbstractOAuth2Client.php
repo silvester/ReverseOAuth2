@@ -27,43 +27,53 @@ abstract class AbstractOAuth2Client
      */
     protected $httpClient;
 
+    abstract public function getUrl();
+    
+    abstract public function getToken(Request $request);
+    
     public function __construct()
     {
         $this->session = new Container('ReverseOAuth2_'.get_class($this));
     }
     
-    public function getUrl()
-    {
-
-    }
-    
-    
-    public function getToken(Request $request) 
-    {
-        
-    }
-    
     public function getInfo()
     {
         if(is_object($this->session->info)) {
+            
             return $this->session->info;
+        
         } elseif(isset($this->session->token->access_token)) {
+            
             $urlProfile = $this->options->getInfoUri() . '?access_token='.$this->session->token->access_token;
-            $retVal = file_get_contents($urlProfile);
+            
+            $client = $this->getHttpclient()->resetParameters(true)->setUri($urlProfile);
+            
+            $retVal = $client->send()->getContent();
+            
+            echo $retVal;
+            
             if(strlen(trim($retVal)) > 0) {
                 $this->session->info = \Zend\Json\Decoder::decode($retVal);
                 return $this->session->info;
             } else {
                 return false;
             }
+            
         } else {
+            
             return false;
+            
         }
     }
     
-    public function getScope()
+    public function getScope($glue = ' ')
     {
-        
+        if(is_array($this->options->getScope()) AND count($this->options->getScope()) > 0) {
+            $str = urlencode(implode($glue, $this->options->getScope()));
+            return '&scope=' . $str;
+        } else {
+            return '';
+        }
     }
     
     public function getState()
@@ -90,6 +100,11 @@ abstract class AbstractOAuth2Client
     public function getError()
     {
         return $this->error;
+    }
+    
+    public function clearError()
+    {
+        $this->error = null;
     }
     
     public function getSessionToken()
