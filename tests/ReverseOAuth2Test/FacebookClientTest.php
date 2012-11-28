@@ -121,8 +121,8 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
         
         $this->assertFalse($this->client->getToken($request));
                 
-        //$error = $this->client->getError();
-        //$this->assertStringEndsWith('settings error.', $error['internal-error']);
+        $error = $this->client->getError();
+        $this->assertStringEndsWith('Unknown error.', $error['internal-error']);
         
         //print_r($this->client->getError());
         //print_r($this->client->getSessionToken());
@@ -164,25 +164,83 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
         
         $this->client->clearError();
         
+        $httpClientMock = $this->getMock(
+                '\ReverseOAuth2\OAuth2HttpClient',
+                array('send'),
+                array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
+        
+        
+        $httpClientMock->expects($this->exactly(1))
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedUserInfoResponse')));
+        
+        $this->client->setHttpClient($httpClientMock);
+        
+        $rs = $this->client->getInfo();
+        $this->assertSame('560366914', $rs->id);
+        
+        $rs = $this->client->getInfo(); // from session
+        $this->assertSame('560366914', $rs->id);
+        
+        //print_r($this->client->getHttpClient());
+        
     }
     
     public function getMockedTokenResponse()
     {
+
+        $response = new \Zend\Http\Response;
+
+        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZD&expires=5117581');
+
+        return $response;
+
+    }
+    
+    public function getFaultyMockedTokenResponse()
+    {
+
+        $response = new \Zend\Http\Response;
+
+        $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
+
+        return $response;
+
+    }
+    
+    public function getMockedUserInfoResponse()
+    {
+        
+        $content = '{"id": "560366914",
+        "name": "Silvester Mara\u017e",
+        "first_name": "Silvester",
+        "last_name": "Mara\u017e",
+        "link": "http:\/\/www.facebook.com\/silvester.maraz",
+        "username": "silvester.maraz",
+        "gender": "male",
+        "timezone": 1,
+        "locale": "sl_SI",
+        "verified": true,
+        "updated_time": "2012-09-14T12:37:27+0000"
+        }';
         
         $response = new \Zend\Http\Response;
         
-        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZD&expires=5117581');
+        $response->setContent($content);
         
         return $response;
         
     }
     
-    public function getFaultyMockedTokenResponse()
+    public function getFaultyMockedUserInfoResponse()
     {
+    
+        $content = '';
     
         $response = new \Zend\Http\Response;
     
-        $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
+        $response->setContent($content);
     
         return $response;
     

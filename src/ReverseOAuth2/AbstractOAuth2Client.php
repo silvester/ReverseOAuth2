@@ -46,12 +46,14 @@ abstract class AbstractOAuth2Client
             
             $urlProfile = $this->options->getInfoUri() . '?access_token='.$this->session->token->access_token;
             
-            $client = $this->getHttpclient()->resetParameters(true)->setUri($urlProfile);
+            $client = $this->getHttpclient()
+                            ->resetParameters(true)
+                            ->setHeaders(array('Accept-encoding' => ''))
+                            ->setMethod(Request::METHOD_GET)
+                            ->setUri($urlProfile);
             
             $retVal = $client->send()->getContent();
-            
-            echo $retVal;
-            
+
             if(strlen(trim($retVal)) > 0) {
                 $this->session->info = \Zend\Json\Decoder::decode($retVal);
                 return $this->session->info;
