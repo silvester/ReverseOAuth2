@@ -31,7 +31,7 @@ class Github extends AbstractOAuth2Client
         
             return true;
             
-        } elseif($this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
+        } elseif(strlen($this->session->state) > 0 AND $this->session->state == $request->getQuery('state') AND strlen($request->getQuery('code')) > 5) {
             
             $client = $this->getHttpClient();
             
@@ -58,23 +58,7 @@ class Github extends AbstractOAuth2Client
                 
             } else {
                 
-                try {
-                    
-                    $error = \Zend\Json\Decoder::decode($retVal);
-                    $this->error = array(
-                        'internal-error' => 'Github settings error.',
-                        'message' => $error->error->message,
-                        'type' => $error->error->type,
-                        'code' => $error->error->code
-                    );
-                    
-                } catch(\Zend\Json\Exception\RuntimeException $e) {
-                    
-                    $this->error = $token;
-                    $this->error['internal-error'] = 'Unknown error.';
-                                        
-                }
-                
+                $this->error = array('error' => $retVal, 'internal-error' => 'Unknown error.');                
                 return false;
                 
             }

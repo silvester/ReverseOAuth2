@@ -13,9 +13,24 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
     
     public function setup()
     {
+         $this->client = $this->getClient();
+    }
+    
+    public function tearDown()
+    {
+
+        unset($this->client->getSessionContainer()->token);
+        unset($this->client->getSessionContainer()->state);
+        unset($this->client->getSessionContainer()->info);
         
-        $this->client = Bootstrap::getServiceManager()->get('ReverseOAuth2\\'.$this->providerName);     
-        
+    }
+    
+    public function getClient()
+    {
+        $me = new \ReverseOAuth2\Client\Facebook;
+        $cf = Bootstrap::getServiceManager()->get('Config');
+        $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['facebook']));
+        return $me;
     }
     
     public function testInstanceTypes()
@@ -82,6 +97,8 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
     public function testFailGetToken()
     {
         
+        $this->client->getUrl();
+        
         $request = new \Zend\Http\PhpEnvironment\Request;
         
         $this->assertFalse($this->client->getToken($request));
@@ -103,7 +120,8 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
     public function testFailGetTokenMocked()
     {
         
-        $this->client->clearError();
+        $this->client->getUrl();
+        
         $httpClientMock = $this->getMock(
             '\ReverseOAuth2\OAuth2HttpClient',
             array('send'),
@@ -124,17 +142,12 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
         $error = $this->client->getError();
         $this->assertStringEndsWith('Unknown error.', $error['internal-error']);
         
-        //print_r($this->client->getError());
-        //print_r($this->client->getSessionToken());
-        //print_r($this->client->getInfo());
-        //print_r($this->client->getHttpClient());
-        
     }
     
     public function testGetTokenMocked()
     {
         
-        $this->client->clearError();
+        $this->client->getUrl();
         
         $httpClientMock = $this->getMock(
             '\ReverseOAuth2\OAuth2HttpClient',
@@ -161,30 +174,78 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
     
     public function testGetInfo()
     {
+
+        $httpClientMock = $this->getMock(
+            '\ReverseOAuth2\OAuth2HttpClient',
+            array('send'),
+            array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
         
-        $this->client->clearError();
+        $httpClientMock->expects($this->exactly(1))
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponse')));
         
+        $this->client->setHttpClient($httpClientMock);
+        
+        $token = new \stdClass; // fake the session token exists
+        $token->access_token = 'some';
+        $this->client->getSessionContainer()->token = $token;
+        
+        $rs = $this->client->getInfo();
+        $this->assertSame('500', $rs->id);
+        
+        $rs = $this->client->getInfo(); // from session
+        $this->assertSame('500', $rs->id);
+        
+    }
+    
+    public function testFailNoReturnGetInfo()
+    {
+    
         $httpClientMock = $this->getMock(
                 '\ReverseOAuth2\OAuth2HttpClient',
                 array('send'),
                 array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
         );
-        
-        
-        $httpClientMock->expects($this->exactly(1))
+    
+        $httpClientMock->expects($this->any())
                         ->method('send')
-                        ->will($this->returnCallback(array($this, 'getMockedUserInfoResponse')));
-        
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponseEmpty')));
+    
+    
+        $token = new \stdClass; // fake the session token exists
+        $token->access_token = 'some';
+        $this->client->getSessionContainer()->token = $token;
+    
         $this->client->setHttpClient($httpClientMock);
-        
-        $rs = $this->client->getInfo();
-        $this->assertSame('560366914', $rs->id);
-        
-        $rs = $this->client->getInfo(); // from session
-        $this->assertSame('560366914', $rs->id);
-        
-        //print_r($this->client->getHttpClient());
-        
+    
+        $this->assertFalse($this->client->getInfo());
+    
+        $error = $this->client->getError();
+        $this->assertSame('Get info return value is empty.', $error['internal-error']);
+    
+    }
+    
+    public function testFailNoTokenGetInfo()
+    {
+    
+        $httpClientMock = $this->getMock(
+                '\ReverseOAuth2\OAuth2HttpClient',
+                array('send'),
+                array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
+    
+        $httpClientMock->expects($this->any())
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponse')));
+    
+        $this->client->setHttpClient($httpClientMock);
+    
+        $this->assertFalse($this->client->getInfo());
+    
+        $error = $this->client->getError();
+        $this->assertSame('Session access token not found.', $error['internal-error']);
+    
     }
     
     public function getMockedTokenResponse()
@@ -209,39 +270,35 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
 
     }
     
-    public function getMockedUserInfoResponse()
+    public function getMockedInfoResponse()
     {
-        
-        $content = '{"id": "560366914",
-        "name": "Silvester Mara\u017e",
-        "first_name": "Silvester",
-        "last_name": "Mara\u017e",
-        "link": "http:\/\/www.facebook.com\/silvester.maraz",
-        "username": "silvester.maraz",
-        "gender": "male",
-        "timezone": 1,
-        "locale": "sl_SI",
-        "verified": true,
-        "updated_time": "2012-09-14T12:37:27+0000"
+    
+        $content = '{
+            "id": "500",
+            "name": "John Doe",
+            "first_name": "John",
+            "last_name": "Doe",
+            "link": "http:\/\/www.facebook.com\/john.doe",
+            "username": "john.doe",
+            "gender": "male",
+            "timezone": 1,
+            "locale": "sl_SI",
+            "verified": true,
+            "updated_time": "2012-09-14T12:37:27+0000"
         }';
-        
+    
         $response = new \Zend\Http\Response;
-        
+    
         $response->setContent($content);
-        
+    
         return $response;
-        
+    
     }
     
-    public function getFaultyMockedUserInfoResponse()
+    public function getMockedInfoResponseEmpty()
     {
-    
-        $content = '';
-    
-        $response = new \Zend\Http\Response;
-    
-        $response->setContent($content);
-    
+        
+        $response = new \Zend\Http\Response;    
         return $response;
     
     }

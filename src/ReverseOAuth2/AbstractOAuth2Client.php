@@ -55,14 +55,20 @@ abstract class AbstractOAuth2Client
             $retVal = $client->send()->getContent();
 
             if(strlen(trim($retVal)) > 0) {
+                
                 $this->session->info = \Zend\Json\Decoder::decode($retVal);
                 return $this->session->info;
+                
             } else {
+                
+                $this->error = array('internal-error' => 'Get info return value is empty.');
                 return false;
+                
             }
             
         } else {
             
+            $this->error = array('internal-error' => 'Session access token not found.');
             return false;
             
         }
@@ -102,11 +108,6 @@ abstract class AbstractOAuth2Client
     public function getError()
     {
         return $this->error;
-    }
-    
-    public function clearError()
-    {
-        $this->error = null;
     }
     
     public function getSessionToken()

@@ -13,9 +13,24 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
     public function setup()
     {
+         $this->client = $this->getClient();
+    }
+    
+    public function tearDown()
+    {
+
+        unset($this->client->getSessionContainer()->token);
+        unset($this->client->getSessionContainer()->state);
+        unset($this->client->getSessionContainer()->info);
         
-        $this->client = Bootstrap::getServiceManager()->get('ReverseOAuth2\\'.$this->providerName);     
-        
+    }
+    
+    public function getClient()
+    {
+        $me = new \ReverseOAuth2\Client\Github;
+        $cf = Bootstrap::getServiceManager()->get('Config');
+        $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['github']));
+        return $me;
     }
     
     public function testInstanceTypes()
@@ -68,7 +83,7 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
     public function testGetScope()
     {
-        
+
         if(count($this->client->getOptions()->getScope()) > 0) {
             $this->assertTrue(strlen($this->client->getScope()) > 0);
         } else {
@@ -81,33 +96,35 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
     public function testFailGetToken()
     {
-        
+
         $request = new \Zend\Http\PhpEnvironment\Request;
         
-        $this->assertFalse($this->client->getToken($request));
-        
-        $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => 'some state')));      
+        $this->client->getUrl();
         
         $this->assertFalse($this->client->getToken($request));
         $error = $this->client->getError();
         $this->assertStringEndsWith('variables do not match the session variables.', $error['internal-error']);
         
+        $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => 'some state')));
+        $this->assertFalse($this->client->getToken($request));
+        $error = $this->client->getError();
+        $this->assertStringEndsWith('variables do not match the session variables.', $error['internal-error']);
+        
+        $this->client->getOptions()->setRedirectUri('http://reverse.si/');
         $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => $this->client->getState())));
         $this->assertFalse($this->client->getToken($request));
-        
         $error = $this->client->getError();
         
-        //$this->assertStringEndsWith('settings error.', $error['internal-error']);
+        $this->assertStringEndsWith('Unknown error.', $error['internal-error']);
         
-        print_r($error);
-        //print_r($this->client->getHttpClient());
         
     }
     
     public function testFailGetTokenMocked()
     {
         
-        $this->client->clearError();
+        $this->client->getUrl();
+        
         $httpClientMock = $this->getMock(
             '\ReverseOAuth2\OAuth2HttpClient',
             array('send'),
@@ -125,20 +142,15 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
         
         $this->assertFalse($this->client->getToken($request));
                 
-        //$error = $this->client->getError();
-        //$this->assertStringEndsWith('settings error.', $error['internal-error']);
-        
-        //print_r($this->client->getError());
-        //print_r($this->client->getSessionToken());
-        //print_r($this->client->getInfo());
-        //print_r($this->client->getHttpClient());
-        
+        $error = $this->client->getError();
+        $this->assertStringEndsWith('Unknown error.', $error['internal-error']);
+         
     }
     
     public function testGetTokenMocked()
     {
         
-        $this->client->clearError();
+        $this->client->getUrl();
         
         $httpClientMock = $this->getMock(
             '\ReverseOAuth2\OAuth2HttpClient',
@@ -165,8 +177,77 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
     public function testGetInfo()
     {
+
+        $httpClientMock = $this->getMock(
+            '\ReverseOAuth2\OAuth2HttpClient',
+            array('send'),
+            array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
         
-        $this->client->clearError();
+        $httpClientMock->expects($this->exactly(1))
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponse')));
+        
+        $this->client->setHttpClient($httpClientMock);
+        
+        $token = new \stdClass; // fake the session token exists
+        $token->access_token = 'some';
+        $this->client->getSessionContainer()->token = $token;
+        
+        $rs = $this->client->getInfo();
+        $this->assertSame('500', $rs->id);
+        
+        $rs = $this->client->getInfo(); // from session
+        $this->assertSame('500', $rs->id);
+        
+    }
+    
+    public function testFailNoReturnGetInfo()
+    {
+
+        $httpClientMock = $this->getMock(
+            '\ReverseOAuth2\OAuth2HttpClient',
+            array('send'),
+            array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
+    
+        $httpClientMock->expects($this->any())
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponseEmpty')));
+    
+        
+        $token = new \stdClass; // fake the session token exists
+        $token->access_token = 'some';
+        $this->client->getSessionContainer()->token = $token;
+        
+        $this->client->setHttpClient($httpClientMock);
+    
+        $this->assertFalse($this->client->getInfo());
+    
+        $error = $this->client->getError();
+        $this->assertSame('Get info return value is empty.', $error['internal-error']);
+    
+    }
+    
+    public function testFailNoTokenGetInfo()
+    {
+
+        $httpClientMock = $this->getMock(
+            '\ReverseOAuth2\OAuth2HttpClient',
+            array('send'),
+            array(null, array('timeout' => 30, 'adapter' => '\Zend\Http\Client\Adapter\Curl'))
+        );
+        
+        $httpClientMock->expects($this->any())
+                        ->method('send')
+                        ->will($this->returnCallback(array($this, 'getMockedInfoResponse')));
+        
+        $this->client->setHttpClient($httpClientMock);
+        
+        $this->assertFalse($this->client->getInfo());
+        
+        $error = $this->client->getError();
+        $this->assertSame('Session access token not found.', $error['internal-error']);
         
     }
     
@@ -175,7 +256,7 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
         
         $response = new \Zend\Http\Response;
         
-        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZD&expires=5117581');
+        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZF&expires=5117581');
         
         return $response;
         
@@ -188,6 +269,39 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
         $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
     
+        return $response;
+    
+    }
+    
+    public function getMockedInfoResponse()
+    {
+    
+        $content = '{
+            "id": "500",
+            "name": "John Doe",
+            "first_name": "John",
+            "last_name": "Doe",
+            "link": "http:\/\/www.facebook.com\/john.doe",
+            "username": "john.doe",
+            "gender": "male",
+            "timezone": 1,
+            "locale": "sl_SI",
+            "verified": true,
+            "updated_time": "2012-09-14T12:37:27+0000"
+        }';
+    
+        $response = new \Zend\Http\Response;
+    
+        $response->setContent($content);
+    
+        return $response;
+    
+    }
+    
+    public function getMockedInfoResponseEmpty()
+    {
+        
+        $response = new \Zend\Http\Response;    
         return $response;
     
     }
