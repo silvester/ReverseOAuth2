@@ -280,7 +280,7 @@ class GoogleClientTest extends PHPUnit_Framework_TestCase
         $response = new \Zend\Http\Response;
 
         $response->setContent('{
-            "access_token": "ya29.AHES6ZQlNeGvC0MbnpUR3OTqmYfkpzzWwC6K3G6EHH-2s4DRVYCHSPwG",
+            "access_token": "ya29.AHES6ZQkpzzWwC6K3G6EHH-2s4DRVYCHSPwG",
             "token_type": "Bearer",
             "expires_in": 3600,
             "id_token": "eyJo_V3ftjOB4JnPlx7AXU8B6u5PKYNhkI6OSB0uEeE0x9aTjEm5q15Ukruxqrsk"

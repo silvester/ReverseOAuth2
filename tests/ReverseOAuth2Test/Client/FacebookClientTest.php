@@ -252,7 +252,7 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
 
         $response = new \Zend\Http\Response;
 
-        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZD&expires=5117581');
+        $response->setContent('access_token=AAAEDkf9KDoQBABLbgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZD&expires=5117581');
 
         return $response;
 
@@ -263,7 +263,7 @@ class FacebookClientTest extends PHPUnit_Framework_TestCase
 
         $response = new \Zend\Http\Response;
 
-        $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
+        $response->setContent('token=AAAEDkf9KDoQBABLCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
 
         return $response;
 

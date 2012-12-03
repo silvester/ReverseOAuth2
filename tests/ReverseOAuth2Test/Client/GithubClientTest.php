@@ -255,7 +255,7 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
         
         $response = new \Zend\Http\Response;
         
-        $response->setContent('access_token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZF&expires=5117581');
+        $response->setContent('access_token=AAAEDkf9KDoQBABLZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZF&expires=5117581');
         
         return $response;
         
@@ -266,7 +266,7 @@ class GithubClientTest extends PHPUnit_Framework_TestCase
     
         $response = new \Zend\Http\Response;
     
-        $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCvwFb4rOT2KwO7EZAUWGwdZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
+        $response->setContent('token=AAAEDkf9KDoQBABLbTeTDEe9kvfZCBBLuCOgWLQpyMUxZBQjkrCZC4Fw3C6EJWTeF7zZB0ymBTdPejD4gae08AZDZg&expires=1');
     
         return $response;
     
