@@ -108,11 +108,14 @@ class GoogleClientTest extends PHPUnit_Framework_TestCase
         $error = $this->client->getError();
         $this->assertStringEndsWith('variables do not match the session variables.', $error['internal-error']);
         
-        $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => $this->client->getState())));
-        $this->assertFalse($this->client->getToken($request));
-        
-        $error = $this->client->getError();
-        $this->assertStringEndsWith('settings error.', $error['internal-error']);
+        if(!getenv('ZF2_PATH')) {
+            
+            $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => $this->client->getState())));
+            $this->assertFalse($this->client->getToken($request));
+            $error = $this->client->getError();
+            $this->assertStringEndsWith('settings error.', $error['internal-error']);
+            
+        }
         
     }
     
@@ -134,10 +137,10 @@ class GoogleClientTest extends PHPUnit_Framework_TestCase
         $this->client->setHttpClient($httpClientMock);
         
         $request = new \Zend\Http\PhpEnvironment\Request;
+        
         $request->setQuery(new \Zend\Stdlib\Parameters(array('code' => 'some code', 'state' => $this->client->getState())));
-                
         $this->assertFalse($this->client->getToken($request));      
-                
+
         $error = $this->client->getError();
         $this->assertStringEndsWith('settings error.', $error['internal-error']);
         

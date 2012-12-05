@@ -11,19 +11,19 @@ abstract class AbstractOAuth2Client
 {
     
     /**
-     * @var Zend\Session\Container
+     * @var Container
      */
     protected $session;
     
     /**
-     * @var ReverseOAuth2\ClientOptions
+     * @var ClientOptions
      */
     protected $options;
     
     protected $error;
     
     /**
-     * @var ReverseOAuth2\OAuth2HttpClient
+     * @var OAuth2HttpClient
      */
     protected $httpClient;
 
