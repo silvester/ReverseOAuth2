@@ -204,5 +204,4 @@ public function onBootstrap(Event $e)
 TODO
 ----
 * Add other clients
-* Write some decent documentation.
 * Demo module is on it's way.
