@@ -55,6 +55,7 @@ public function callbackAction()
     $me = $this->getServiceLocator()->get('ReverseOAuth2\Google');
     //$me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
     //$me = $this->getServiceLocator()->get('ReverseOAuth2\Facebook');
+    //$me = $this->getServiceLocator()->get('ReverseOAuth2\LinkedIn');
 
     if (strlen($this->params()->fromQuery('code')) > 10) {
     	
@@ -90,6 +91,7 @@ public function callbackAction()
     $me = $this->getServiceLocator()->get('ReverseOAuth2\Google');
     //$me = $this->getServiceLocator()->get('ReverseOAuth2\Github');
     //$me = $this->getServiceLocator()->get('ReverseOAuth2\Facebook');
+    //$me = $this->getServiceLocator()->get('ReverseOAuth2\LinkedIn');
 
 	$me->getOptions()->setScope(array('email', 'user'));
 	$me->getOptions()->setAuthUri('http://google.com/');
