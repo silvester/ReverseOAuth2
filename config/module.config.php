@@ -13,6 +13,13 @@ return array(
                 return $me;
             },
             
+            'ReverseOAuth2\LinkedIn' => function ($sm) {
+                $me = new \ReverseOAuth2\Client\LinkedIn;
+                $cf = $sm->get('Config');
+                $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['linkedin']));
+                return $me;
+            },
+
             'ReverseOAuth2\Github' => function ($sm) {
                 $me = new \ReverseOAuth2\Client\Github;
                 $cf = $sm->get('Config');
@@ -86,7 +93,26 @@ return array(
             'client_secret' => 'your secret',
             'redirect_uri'  => 'your callback url which links to your controller',
         ),
-        
+
+        'linkedin' => array(
+            'scope' => array(
+                /*
+                'user',
+                'public_repo',
+                'repo',
+                'repo:status',
+                'delete_repo',
+                'gist'
+                */
+            ),
+            'auth_uri'      => 'https://www.linkedin.com/uas/oauth2/authorization',
+            'token_uri'     => 'https://www.linkedin.com/uas/oauth2/accessToken',
+            'info_uri'      => 'https://api.linkedin.com/v1/people/~',
+            'client_id'     => 'your api key',
+            'client_secret' => 'your api secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
+        ),
+
     )
     
 );

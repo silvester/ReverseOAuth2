@@ -77,7 +77,7 @@ abstract class AbstractOAuth2Client
     public function getScope($glue = ' ')
     {
         if(is_array($this->options->getScope()) AND count($this->options->getScope()) > 0) {
-            $str = urlencode(implode($glue, $this->options->getScope()));
+            $str = urlencode(implode($glue, array_unique($this->options->getScope())));
             return '&scope=' . $str;
         } else {
             return '';

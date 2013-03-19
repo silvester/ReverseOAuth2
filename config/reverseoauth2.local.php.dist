@@ -16,5 +16,10 @@ return array(
             'client_secret' => 'your secret',
             'redirect_uri'  => 'your callback url which links to your controller',
         ),
+        'linkedin' => array(
+            'client_id'     => 'your api key',
+            'client_secret' => 'your api secret',
+            'redirect_uri'  => 'your callback url which links to your controller',
+        ),
     )
 );
