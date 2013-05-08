@@ -3,7 +3,9 @@ ReverseOAuth2
 
 [![Build Status](https://secure.travis-ci.org/silvester/ReverseOAuth2.png?branch=master)](https://travis-ci.org/silvester/ReverseOAuth2)
 
-Another OAuth2 client for ZF2. It provides clients for github, google and facebook others soon to come.
+Another OAuth2 client for ZF2. It provides clients for github, google, facebook and linkedin others soon to come. 
+
+The library is kept as simple as possible, it does not provide routes or controllers.
 
 Demo
 ----
