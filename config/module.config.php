@@ -6,33 +6,13 @@ return array(
         
         'factories' => array(
             
-            'ReverseOAuth2\Google' => function ($sm) {
-                $me = new \ReverseOAuth2\Client\Google;
-                $cf = $sm->get('Config');
-                $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['google']));
-                return $me;
-            },
+            'ReverseOAuth2\Google' => 'ReverseOAuth2\Client\GoogleFactory',
             
-            'ReverseOAuth2\LinkedIn' => function ($sm) {
-                $me = new \ReverseOAuth2\Client\LinkedIn;
-                $cf = $sm->get('Config');
-                $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['linkedin']));
-                return $me;
-            },
+            'ReverseOAuth2\LinkedIn' => 'ReverseOAuth2\Client\LinkedInFactory',
 
-            'ReverseOAuth2\Github' => function ($sm) {
-                $me = new \ReverseOAuth2\Client\Github;
-                $cf = $sm->get('Config');
-                $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['github']));
-                return $me;
-            },
+            'ReverseOAuth2\Github' => 'ReverseOAuth2\Client\GithubFactory',
             
-            'ReverseOAuth2\Facebook' => function ($sm) {
-                $me = new \ReverseOAuth2\Client\Facebook;
-                $cf = $sm->get('Config');
-                $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['facebook']));
-                return $me;
-            }
+            'ReverseOAuth2\Facebook' => 'ReverseOAuth2\Client\FacebookFactory'
             
         ),
         
