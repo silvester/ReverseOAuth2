@@ -48,7 +48,7 @@ abstract class AbstractOAuth2Client
             
             $client = $this->getHttpclient()
                             ->resetParameters(true)
-                            ->setHeaders(array('Accept-encoding' => ''))
+                            ->setHeaders(array('Accept-encoding' => 'utf-8'))
                             ->setMethod(Request::METHOD_GET)
                             ->setUri($urlProfile);
             
