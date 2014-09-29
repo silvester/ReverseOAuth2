@@ -1,8 +1,8 @@
 <?php
 
-use ReverseOAuth2Test\Bootstrap;
-
 namespace ReverseOAuth2Test;
+
+use ReverseOAuth2Test\Bootstrap;
 
 use PHPUnit_Framework_TestCase;
 
