@@ -38,7 +38,21 @@ return array(
         ),
         
         'facebook' => array(
-            'scope' => array(
+            'info_fields' => array(
+                /*
+                'id',
+                'name',
+                'gender',
+                'last_name',
+                'first_name',
+                'email',
+                'locale',
+                'verified'
+                //'...'
+                */
+            ), 
+            'oauth' => array(
+                'scope' => array(
                 /*
                 'user_about_me',
                 'user_activities',
@@ -46,13 +60,14 @@ return array(
                 'read_friendlists',
                 //'...'
                 */
-             ),
-            'auth_uri'      => 'https://www.facebook.com/dialog/oauth',
-            'token_uri'     => 'https://graph.facebook.com/oauth/access_token',
-            'info_uri'      => 'https://graph.facebook.com/me',
-            'client_id'     => 'your id',
-            'client_secret' => 'your secret',
-            'redirect_uri'  => 'your callback url which links to your controller',
+                ),
+                'auth_uri'      => 'https://www.facebook.com/dialog/oauth',
+                'token_uri'     => 'https://graph.facebook.com/oauth/access_token',
+                'info_uri'      => 'https://graph.facebook.com/me',
+                'client_id'     => 'your id',
+                'client_secret' => 'your secret',
+                'redirect_uri'  => 'your callback url which links to your controller',
+            ),
         ),
             
         'github' => array(

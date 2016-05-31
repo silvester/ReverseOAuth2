@@ -9,6 +9,37 @@ class Facebook extends AbstractOAuth2Client
 {
 
     protected $providerName = 'facebook';
+     /**
+     *
+     * @var array
+     */
+    protected $fields;
+
+    /**
+     *
+     * @param array $fields
+     */
+    public function setFields($fields)
+    {
+        if (!is_array($fields)) {
+            throw new Exception("Error fields not is an array.");
+        } elseif (!count($fields)) {
+            throw new Exception("fields do not exist.");
+        }
+
+        $this->fields = $fields;
+
+    }
+
+    public function getFields()
+    {
+        if (!$this->fields) {
+            $this->fields = array('id', 'name');
+        }
+
+        return $this->fields;
+
+    }
     
     public function getUrl()
     {
@@ -38,7 +69,7 @@ class Facebook extends AbstractOAuth2Client
             $client->setUri($this->options->getTokenUri());
 
             $client->setHeaders(array('Accept-encoding' => 'utf-8'));
-            
+
             $client->setMethod(Request::METHOD_POST);
             
             $client->setParameterPost(array(
@@ -93,6 +124,47 @@ class Facebook extends AbstractOAuth2Client
             
         }
         
+    }
+
+    public function getInfo()
+    {
+        if(is_object($this->session->info)) {
+
+            return $this->session->info;
+
+        } elseif(isset($this->session->token->access_token)) {
+
+            $client = $this->getHttpclient()
+                ->resetParameters(true)
+                ->setHeaders(array('Accept-encoding' => 'utf-8'))
+                ->setMethod(Request::METHOD_GET)
+                ->setUri($this->options->getInfoUri());
+
+            $client->setParameterGet(array(
+                'access_token' => $this->session->token->access_token,
+                'fields' => implode(',', array_unique($this->fields))
+            ));
+
+            $retVal = $client->send()->getContent();
+
+            if(strlen(trim($retVal)) > 0) {
+
+                $this->session->info = \Zend\Json\Decoder::decode($retVal);
+                return $this->session->info;
+
+            } else {
+
+                $this->error = array('internal-error' => 'Get info return value is empty.');
+                return false;
+
+            }
+
+        } else {
+
+            $this->error = array('internal-error' => 'Session access token not found.');
+            return false;
+
+        }
     }
     
 }

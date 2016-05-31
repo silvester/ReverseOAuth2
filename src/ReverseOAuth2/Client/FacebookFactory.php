@@ -16,7 +16,8 @@ class FacebookFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator) {
         $me = new \ReverseOAuth2\Client\Facebook;
         $cf = $serviceLocator->get('Config');
-        $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['facebook']));
+        $me->setOptions(new \ReverseOAuth2\ClientOptions($cf['reverseoauth2']['facebook']['oauth']));
+        $me->setFields($cf['reverseoauth2']['facebook']['info_fields']);
         return $me;
     }
 }
