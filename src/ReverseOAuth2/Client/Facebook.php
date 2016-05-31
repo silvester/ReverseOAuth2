@@ -36,6 +36,8 @@ class Facebook extends AbstractOAuth2Client
             $client = $this->getHttpClient();
             
             $client->setUri($this->options->getTokenUri());
+
+            $client->setHeaders(array('Accept-encoding' => 'utf-8'));
             
             $client->setMethod(Request::METHOD_POST);
             
